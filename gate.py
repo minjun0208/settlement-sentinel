@@ -9,8 +9,6 @@ ESCALATION_PATH = os.path.join("data", "escalations.jsonl")
 CONFIDENCE_THRESHOLD = 0.85  # below this, the agent refuses to act alone
 
 
-# ---------- storage helpers (append-only, latest record wins) ----------
-
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -34,11 +32,16 @@ def _in_ledger(platform: str, order_id: str) -> bool:
     )
 
 
-def _latest_escalation(order_id: str):
+def _latest_escalation(order_id: str, platform: str | None = None):
+    # Scoped by platform when known, so two platforms that happen to share
+    # an order id can never block or resolve each other's escalation.
     latest = None
     for r in _read(ESCALATION_PATH):
-        if r.get("order_id") == order_id:
-            latest = r
+        if r.get("order_id") != order_id:
+            continue
+        if platform is not None and r.get("platform") != platform:
+            continue
+        latest = r
     return latest
 
 
@@ -49,8 +52,6 @@ def _owner_question(amount) -> str:
         f"Reply 'approve' to file a dispute or 'dismiss' to close."
     )
 
-
-# ---------- tools ----------
 
 @tool
 def decide_actions(platform: str) -> dict:
@@ -92,7 +93,7 @@ def decide_actions(platform: str) -> dict:
             verdicts.append({**base, "action": "skipped_already_filed"})
             continue
 
-        esc = _latest_escalation(order_id)
+        esc = _latest_escalation(order_id, platform)
         if esc and esc.get("status") == "pending_owner":
             verdicts.append({**base, "action": "skipped_awaiting_owner"})
             continue
@@ -194,7 +195,7 @@ def list_pending_escalations(scope: str) -> dict:
     scope = scope.strip().lower()
     latest = {}
     for r in _read(ESCALATION_PATH):
-        latest[r["order_id"]] = r
+        latest[(r.get("platform"), r["order_id"])] = r
     pending = [
         r for r in latest.values()
         if r.get("status") == "pending_owner"

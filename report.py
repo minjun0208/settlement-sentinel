@@ -104,3 +104,18 @@ def render_report(platform: str) -> str:
     text = "\n".join(out)
     STATE[platform]["report"] = text
     return text
+
+
+def render_pending(pending: list) -> str:
+    """Render the owner queue. Plain function (not a tool): the program
+    prints this itself so the model never re-types an id, amount or question."""
+    if not pending:
+        return "### Pending for the owner\nNone."
+    out = ["### Pending for the owner"]
+    for p in pending:
+        name = PLATFORM_NAMES.get(p.get("platform"), p.get("platform"))
+        out.append(
+            f"- **{p['order_id']}** ({name}) — {_won(p.get('amount_at_stake', 0))} KRW at stake\n"
+            f"  {p.get('question_for_owner', '')}"
+        )
+    return "\n".join(out)
