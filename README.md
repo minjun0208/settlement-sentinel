@@ -101,6 +101,8 @@ amount the settlement is understated by — an internally inconsistent line.
 
 Above threshold. The agent files it and tells the owner afterwards.
 
+![Baemin run](docs/01_baemin.png)
+
 ### 2. The gate refusing to act
 
 ```bash
@@ -122,6 +124,8 @@ Below threshold. **The agent does not file it.** It asks:
 > **YG-3005** — 3,000 KRW gap, cause unknown. Do you know of a refund or
 > adjustment on this order? Reply 'approve' to file a dispute or 'dismiss' to close.
 
+![The gate refusing to act](docs/02_yogiyo_gate.png)
+
 Note the shape of this: confidence and money move in opposite directions. The most
 valuable finding is the one the agent is least sure about, and it still stops.
 That is the whole point.
@@ -132,6 +136,8 @@ That is the whole point.
 python agent.py pending
 python agent.py approve YG-3005 confirmed double deduction with Yogiyo
 ```
+
+![Owner queue](docs/03_pending.png)
 
 The dispute is now filed, recorded as `decided_by: owner` rather than `agent`.
 Running `python agent.py yogiyo` again returns `skipped_awaiting_owner` /
