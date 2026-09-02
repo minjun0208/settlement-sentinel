@@ -265,6 +265,14 @@ depend on the model. Or drop the key entirely and use `--no-llm`.
 
 ---
 
+## Write-ups
+
+Three posts on the design decisions behind this project, on the AWS Builder Center:
+
+- [My audit agent passed a 10.9% overcharge as clean](https://builder.aws.com/content/3IiguE9Tk9MsRWolGzNyjD70ZA7/agents-for-humans-my-audit-agent-passed-a-109percent-overcharge-as-clean) — circular verification, and the one-line bug behind it
+- [My agent refuses to file the biggest discrepancy it finds](https://builder.aws.com/content/3Iklc4fZP5Rp8px59oJfFxjFJkG/agents-for-humans-my-agent-refuses-to-file-the-biggest-discrepancy-it-finds) — the fail-closed gate, and what happened when I removed it
+- [My README made a claim my code did not support](https://builder.aws.com/content/3In9SkMaB95M8oRkXmg45uWexmg/agents-for-humans-my-readme-made-a-claim-my-code-did-not-support) — why `--no-llm` exists
+
 ## Built with
 
 Python 3.10 · AWS Strands Agents SDK · Amazon Bedrock (Claude Sonnet 4.6) · boto3 ·
